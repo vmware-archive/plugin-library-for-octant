@@ -1,0 +1,23 @@
+{
+  "name": "@project-octant/plugin",
+  "version": "0.1.0",
+  "description": "TypeScript plugin library for Octant",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "./scripts/generate.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vmware-tanzu/plugin-library-for-octant.git"
+  },
+  "keywords": [
+    "octant",
+    "octant-plugin"
+  ],
+  "author": "Wayne Witzel III <wayne@riotousliving.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/vmware-tanzu/plugin-library-for-octant/issues"
+  },
+  "homepage": "https://github.com/vmware-tanzu/plugin-library-for-octant#readme"
+}
