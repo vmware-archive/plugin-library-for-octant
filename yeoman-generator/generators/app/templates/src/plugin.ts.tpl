@@ -12,15 +12,15 @@ import * as octant from "@project-octant/plugin";
 import * as h from "@project-octant/plugin/helpers";
 
 // components
-import { TextFactory } from "./octant/text";
+import { TextFactory } from "@project-octant/plugin/components/text";
 
 // rxjs is used to show that Observables function within
 // the Octant JavaScript runtime.
 import { Subject, BehaviorSubject } from "rxjs";
 import { CardFactory } from "./octant/card";
-import { FlexLayoutFactory } from "./octant/flexlayout";
-import { ButtonGroupFactory } from "./octant/button-group";
-import { SummaryFactory } from "./octant/summary";
+import { FlexLayoutFactory } from "@project-octant/plugin/components/flexlayout";
+import { ButtonGroupFactory } from "@project-octant/plugin/components/button-group";
+import { SummaryFactory } from "@project-octant/plugin/components/summary";
 
 // This plugin will handle v1/Pod types.
 let podGVK = { version: "v1", kind: "Pod" };
