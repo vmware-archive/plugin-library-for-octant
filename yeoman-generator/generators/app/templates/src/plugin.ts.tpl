@@ -5,11 +5,11 @@ import "regenerator-runtime/runtime";
 
 // plugin contains interfaces your plugin can expect
 // this includes your main plugin class, response, requests, and clients.
-import * as octant from "./octant/plugin";
+import * as octant from "@project-octant/plugin";
 
 // helpers for generating the
 // objects that Octant can render to components.
-import * as h from "./octant/component-helpers";
+import * as h from "@project-octant/plugin/helpers";
 
 // components
 import { TextFactory } from "./octant/text";
