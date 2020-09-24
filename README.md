@@ -4,8 +4,8 @@ Plugin Library for Octant provides code to help with creating Octant TypeScript 
 
 ## Packages
 
-### lib
-`lib` contains the source code for generated TypeScript components and the Octant plugin helpers.
+### plugin
+`plugin` contains the source code for generated TypeScript components and the Octant plugin helpers.
 
 ### yeoman-generator
 `yeoman-generator` containes the source code for the Octant plugin yeoman generator which helps developers get started quickly with building plugins.
