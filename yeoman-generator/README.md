@@ -26,7 +26,7 @@ A [Yeoman](http://yeoman.io) generator for generating a Octant plugin using Type
 ### Installing the Generator
 
 ```bash
-npm install -g generator-octant-plugin
+npm install -g @project-octant/generator-octant-plugin
 ```
 
 ## Using the Generator
