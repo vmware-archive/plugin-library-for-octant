@@ -2,7 +2,7 @@
 
 ## Installation
 
-  npm install @project-octant/plugin
+    npm install @project-octant/plugin
 
 ## Deveploment
 
