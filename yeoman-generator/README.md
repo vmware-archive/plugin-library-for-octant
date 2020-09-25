@@ -66,9 +66,6 @@ npm run plugin:watch
     |-- package.json
     |-- src
         |-- <plugin-name>.ts
-        |-- octant
-            |-- plugin.d.ts
-            |-- components.ts
     |-- tsconfig.json
     |-- webpack.config.js
 
@@ -91,12 +88,6 @@ Any new code meant to be distributed with the plugin should be placed in here.
 #### `src/<plugin-name>.ts`
 An example TypeScript class that implements the plugin interface. This example plugin
 adds a config entry to the Pod summary.
-
-#### `src/octant/plugin.d.ts`
-A TypeScript module that defines the interfaces that must be implement by your plugin.
-
-#### `src/octant/components.ts`
-A TypeScript module that defines helper classes and functions for creating components.
 
 #### `tsconfig.json`
 The configuration for the TypeScript compiler. The settings should not be changed.
