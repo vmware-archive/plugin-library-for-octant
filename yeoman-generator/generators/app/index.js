@@ -50,21 +50,11 @@ module.exports = class extends Generator {
     writing() {
         var generator = this;
 
-
-
-        copyDestination('src/octant/', 'src/octant/');
         copyTemplate('src/plugin.ts.tpl', 'src/' + this.props.filename + '.ts');
         copyTemplate('package.json.tpl', 'package.json');
         copyTemplate('webpack.config.js.tpl', 'webpack.config.js');
         copyTemplate('tsconfig.json.tpl', 'tsconfig.json');
 
-        function copyDestination(dir1, dir2) {
-            generator.copyDestination(
-                generator.templatePath(dir1),
-                generator.destinationPath(dir2),
-                generator.props
-            );
-        }
         function copyTemplate(template, destination) {
             generator.fs.copyTpl(
                 generator.templatePath(template),
