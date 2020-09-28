@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [[ -z ${OCTANT_TS_BIN} ]]; then
     echo "You must set OCTANT_TS_BIN to the path of the ts-component-gen executable"
     exit
