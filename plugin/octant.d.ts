@@ -76,22 +76,60 @@ export interface ActionResponse {
 }
 
 /**
+ * Ref defines the a reference to an object in Octant and is used with the DashboardClient.RefPath
+ * method for generating links to resources in Octant.
+ * @property {string} apiVersion - apiVersion of the resource
+ * @property {string} kind - kind of the resource
+ * @property {string} name - name of the resource
+ * @property {string} namespace - namespace of the resource
+ */
+export interface Ref {
+  apiVersion: string;
+  kind: string;
+  name: string;
+  namespace: string;
+}
+
+/**
  * DashboardClient provides API operations to Octant plugins.
  * This client is provided with every request to ensure that the namespace and context
  * match the current selected namespace and context in Octant.
  */
 export interface DashboardClient {
+  /**
+   * Get attempts to fetch a resource using the key provided
+   * @param key - the key of the object to be fetched
+   * @throws will throw an exception if there is an error with the request
+   */
   Get(key: Key): any;
+  /**
+   * List attempts to fetch a list of all the resources matching the provided key
+   * @param key - the key of the objects to list
+   * @throws will throw an exception if there is an error during the request
+   */
   List(key: Key): any[];
+  /**
+   * Update will apply the YAML in to the provided namespace. Use this to Create and Update resources in the cluster.
+   * When there are multiple resources in the YAML, they will be applied in order.
+   * If an error is encountered an exception will be throw and no further resources will be applied.
+   * @param namespace - namespace for the resource, if empty, current Octant namespace will be used, if
+   * namespace is set in the YAMl that will always take precedence over this param
+   * @param yaml - YAML to apply, can contain multiple resources
+   * @throws will throw an exception if there is an error during the request
+   */
   Update(namespace: string, yaml: string): string;
-
   /**
    * Delete deletes a an object identified by the key.
    * @param key The key of the object to be deleted
    * @throws Will throw an exception if the key is invalid or the delete fails.
    */
   Delete(key: Key): never;
-  RefPath(object: any): string;
+  /**
+   * RefPath generates an Octant reference path using the details of the Ref provided.
+   * @param object - object to renerate the reference path for. Reference paths can be used with LinkFactory to
+   * create links to resources in Octant
+   */
+  RefPath(object: Ref): string;
 }
 
 /**

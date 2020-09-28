@@ -31,6 +31,12 @@ export type TableFilters = {
   };
 };
 
+/**
+ * createPrintResponse generates a PrintResponse
+ * @param config config will be appended to the Config card of the resource summary
+ * @param status status will be appended to the Status card of the resource summary
+ * @param items an Array of components to add to the resource summary
+ */
 export const createPrintResponse = (
   config?: SummaryFactory,
   status?: SummaryFactory,
@@ -45,6 +51,11 @@ export const createPrintResponse = (
   };
 };
 
+/**
+ * createTabResponse generates a TabResponse
+ * @param name title to display on the tab
+ * @param contents a flex layout factory that will be rendered as the tab contents
+ */
 export const createTabResponse = (
   name: string,
   contents: FlexLayoutFactory
@@ -58,7 +69,7 @@ export const createTabResponse = (
 };
 
 /**
- * 
+ * createContentResponse generates a ContentResponse
  * @param title title of the page, this is rendered directly above the content
  * @param bodyComponents an Array of ComponentFactory that will be rendered using toComponent()
  * @param buttonGroup global action buttons to display, these render on the same row as the title
@@ -159,6 +170,9 @@ export class TableFactoryBuilder {
     this.factoryMetadata = factoryMetadata;
   }
 
+  /**
+   * @property {string} emptyContent message to dispaly when there is no table content
+   */
   public get emptyContent(): string {
     return this._emptyContent;
   }
@@ -166,6 +180,9 @@ export class TableFactoryBuilder {
     this._emptyContent = message;
   }
 
+  /**
+   * @property {boolean} loading display the loading indictor when displaying the table
+   */
   public get loading(): boolean {
     return this._loading;
   }
@@ -173,6 +190,9 @@ export class TableFactoryBuilder {
     this._loading = loading;
   }
 
+  /**
+   * @property {TableFilters} filters client side data filters for the table
+   */
   public get filters(): TableFilters {
     return this._filters;
   }
@@ -180,6 +200,9 @@ export class TableFactoryBuilder {
     this._filters = f;
   }
 
+  /**
+   * @property {string[]} columns table columns are used as header titles and to populate table data from TableRow objects.
+   */
   public get columns(): string[] {
     return this._columns;
   }
@@ -225,18 +248,17 @@ export class TableFactoryBuilder {
   }
 }
 
-export interface Ref {
-  apiVersion: string;
-  kind: string;
-  name: string;
-  namespace: string;
-}
-
-export const genLinkFromObject = (
+/**
+ * genLinkFromObject generates an Octant link to a resource. This helper wraps
+ * genLink and attempts to create a Ref object from the object passed in.
+ * @param object resource with metadata, kind, and apiVersion defined.
+ * @param client DashboardClient
+ */
+export const genLinkFromObject = <T>(
   object: any,
   client: octant.DashboardClient
 ): Component<LinkConfig> => {
-  const ref: Ref = {
+  const ref: octant.Ref = {
     namespace: object.metadata.namespace,
     apiVersion: object.apiVersion,
     kind: object.kind,
@@ -246,8 +268,13 @@ export const genLinkFromObject = (
   return genLink(ref, client);
 };
 
+/**
+ * 
+ * @param ref Ref object to generate a link from.
+ * @param client DashboardClient
+ */
 export const genLink = (
-  ref: Ref,
+  ref: octant.Ref,
   client: octant.DashboardClient
 ): Component<LinkConfig> => {
   const path = client.RefPath(ref);
