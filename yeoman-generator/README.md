@@ -35,13 +35,12 @@ Start the Octant plugin generator.
 
 ```bash
 mkdir your-plugin && cd your-plugin
-yo octant-plugin
+yo @project-octant/octant-plugin
 ```
 
 You will be prompted for the following information
    - Project name
    - Project description
-   - If plugin is a module? (Yes/No)
    - Octant plugin path (used by plugin:watch, plugin:install)
 
 ## Working with the Generated Files
@@ -66,6 +65,8 @@ npm run plugin:watch
     |-- package.json
     |-- src
         |-- <plugin-name>.ts
+        | -- content.ts
+        | -- routes.ts
     |-- tsconfig.json
     |-- webpack.config.js
 
@@ -87,7 +88,16 @@ Any new code meant to be distributed with the plugin should be placed in here.
 
 #### `src/<plugin-name>.ts`
 An example TypeScript class that implements the plugin interface. This example plugin
-adds a config entry to the Pod summary.
+adds Config, Status, and Items and a Tab to v1/Pods. It also acts as a module and implements
+a custom navigation menu and shows how to use the `contentResponseFromRouter` helper function
+to build handlers with route matching.
+
+#### `src/content.ts`
+Implements content handlers for use with module plugins and our
+routes helper.
+
+#### `src/routes.ts`
+Implements route matching and uses the content handlers defined in `content.ts`
 
 #### `tsconfig.json`
 The configuration for the TypeScript compiler. The settings should not be changed.
@@ -116,7 +126,7 @@ Transpiles the plugin and generates a single minified JavaScript file in `<octan
 
 1. Initialize a new, empty Git repository on Github.
 2. Clone the new repository to your development environment.
-3. Use "```yo octant-plugin```" to generate the project.
+3. Use "```yo @project-octant/octant-plugin```" to generate the project.
 
 ### Making Changes
 
