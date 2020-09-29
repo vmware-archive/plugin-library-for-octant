@@ -27,12 +27,6 @@ module.exports = class extends Generator {
                 message: 'Your plugin description: '
             },
             {
-                type: 'list',
-                name: 'isModule',
-                message: 'Is your plugin an Octant module? (see: https://reference.octant.dev/isModule)',
-                choices: ['Yes', 'No']
-            },
-            {
                 type: 'input',
                 name: 'pluginPath',
                 message: 'Octant plugin path: ',
@@ -43,7 +37,7 @@ module.exports = class extends Generator {
         return this.prompt(prompts).then(props => {
             this.props = props;
             this.props.filename = changeCase.paramCase(props.name);
-            this.props.isModule = props.isModule === 'Yes' ? true : false;
+            this.props.isModule = true;
         });
     }
 
@@ -51,6 +45,8 @@ module.exports = class extends Generator {
         var generator = this;
 
         copyTemplate('src/plugin.ts.tpl', 'src/' + this.props.filename + '.ts');
+        copyTemplate('src/routes.ts.tpl', 'src/routes.ts');
+        copyTemplate('src/content.ts.tpl', 'src/content.ts');
         copyTemplate('package.json.tpl', 'package.json');
         copyTemplate('webpack.config.js.tpl', 'webpack.config.js');
         copyTemplate('tsconfig.json.tpl', 'tsconfig.json');

@@ -45,6 +45,7 @@
     "@project-octant/plugin": "^0.1.0",
     "@kubernetes/client-node": "^0.12.0",
     "regenerator-runtime": "^0.13.5",
+    "route-recognizer": "^0.3.4",
     "rxjs": "^6.6.0"
   }
 }

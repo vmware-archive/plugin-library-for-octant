@@ -10,6 +10,7 @@ import {
   ComponentFactory,
   FactoryMetadata,
 } from "./components/component-factory";
+import { GridActionsFactory } from "./components/grid-actions";
 import { ButtonGroupFactory } from "./components/button-group";
 import { FlexLayoutFactory } from "./components/flexlayout";
 import { SummaryFactory } from "./components/summary";
@@ -105,10 +106,9 @@ export const createContentResponse = (
  * @param router a RouteRecognizer
  */
 export const contentResponseFromRouter = (
+  plugin: octant.Plugin,
   router: RouteRecognizer,
-  request: octant.ContentRequest,
-  dashboardClient: octant.DashboardClient,
-  httpClient: octant.HTTPClient
+  request: octant.ContentRequest
 ): octant.ContentResponse => {
   // routes defined in routes.ts
   // handlers defined in content.ts
@@ -123,10 +123,7 @@ export const contentResponseFromRouter = (
           throw new Error("root: more than one default handler found");
         }
         const { handler, params } = handlers[0];
-        return handler.call(
-          { dashboardClient: dashboardClient, httpClient: httpClient },
-          Object.assign({}, params, request)
-        );
+        return handler.call(plugin, Object.assign({}, request, params));
       } catch (e) {
         const title = [
           new TextFactory({ value: "Error Routing" }),
@@ -151,10 +148,7 @@ export const contentResponseFromRouter = (
           throw new Error("no match: more than one notFound handler found");
         }
         const { handler, params } = handlers[0];
-        return handler.call(
-          { dashboardClient: dashboardClient, httpClient: httpClient },
-          Object.assign({}, params, request)
-        );
+        return handler.call(plugin, Object.assign({}, request, params));
       } catch (e) {
         const title = [
           new TextFactory({ value: "Error Routing" }),
@@ -183,10 +177,7 @@ export const contentResponseFromRouter = (
   // Dispatch to route handler
   const { handler, params } = results[0];
   try {
-    return handler.call(
-      { dashboardClient: dashboardClient, httpClient: httpClient },
-      Object.assign({}, params, request)
-    );
+    return handler.call(plugin, Object.assign({}, request, params));
   } catch (e) {
     try {
       const handlers = router.handlersFor("notFound");
@@ -195,19 +186,9 @@ export const contentResponseFromRouter = (
       }
       return handlers[0]();
     } catch (e) {
-      console.error(JSON.stringify(e));
+      throw e;
     }
   }
-
-  const title = [
-    new TextFactory({ value: "Bad Route" }),
-    new TextFactory({ value: request.contentPath }),
-  ];
-  return createContentResponse(title, [
-    new TextFactory({
-      value: "Check your router and navigation configuration.",
-    }),
-  ]);
 };
 
 /**
@@ -263,6 +244,7 @@ export class TableFactoryBuilder {
   private _title: ComponentFactory<any>[];
   private _columns: string[];
   private _rows: { [key: string]: ComponentFactory<any> }[];
+  private _gridActions: GridActionsFactory | undefined;
   private _emptyContent: string;
   private _loading: boolean;
   private _filters: TableFilters;
@@ -273,6 +255,7 @@ export class TableFactoryBuilder {
    * @param columns titles for each column in the table
    * @param rows initial set of rows
    * @param emptyContent message to display when there are no rows, defaults to "No results found!"
+   * @param gridActions actions to make available for each row of the table
    * @param loading display the loading indicator on the table
    * @param filters set any data filters on the table
    * @param factoryMetadata allows for changing the title or accessor of the underlying TableFactory
@@ -282,6 +265,7 @@ export class TableFactoryBuilder {
     columns: string[],
     rows?: { [key: string]: ComponentFactory<any> }[],
     emptyContent?: string,
+    gridActions?: GridActionsFactory,
     loading?: boolean,
     filters?: TableFilters,
     factoryMetadata?: FactoryMetadata
@@ -289,10 +273,21 @@ export class TableFactoryBuilder {
     this._title = title;
     this._columns = columns;
     this._rows = rows ? rows : [];
+    this._gridActions = gridActions;
     this._emptyContent = emptyContent ? emptyContent : "No results found!";
     this._loading = loading ? loading : false;
     this._filters = filters ? filters : {};
     this.factoryMetadata = factoryMetadata;
+  }
+
+  /**
+   * @property {GridActionsFactory} gridActions holds a list of grid actions for each row
+   */
+  public get gridActions(): GridActionsFactory | undefined {
+    return this._gridActions;
+  }
+  public set gridActions(gridActions: GridActionsFactory | undefined) {
+    this._gridActions = gridActions;
   }
 
   /**
@@ -373,6 +368,9 @@ export class TableFactoryBuilder {
       Object.keys(row).forEach((v) => {
         componentRow[v] = row[v].toComponent();
       });
+      if (this._gridActions) {
+        componentRow["_action"] = this._gridActions.toComponent();
+      }
       return componentRow;
     });
 
@@ -426,16 +424,4 @@ export const genLink = (
 ): Component<LinkConfig> => {
   const path = client.RefPath(ref);
   return new LinkFactory({ value: ref.name, ref: path }).toComponent();
-};
-
-/**
- * navigationFromRouter returns an Octant navigation object for use with the Navigation handler.
- */
-export const navigationFromRouter = (
-  router: RouteRecognizer
-): octant.Navigation => {
-  const results = router.recognize("/");
-  console.log(JSON.stringify(results));
-  console.log("testy");
-  return new Navigation("My title", "my-path", "cloud");
 };

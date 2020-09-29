@@ -17,10 +17,11 @@ import { TextFactory } from "@project-octant/plugin/components/text";
 // rxjs is used to show that Observables function within
 // the Octant JavaScript runtime.
 import { Subject, BehaviorSubject } from "rxjs";
-import { CardFactory } from "./octant/card";
+import { CardFactory } from "@project-octant/plugin/components/card";
 import { FlexLayoutFactory } from "@project-octant/plugin/components/flexlayout";
-import { ButtonGroupFactory } from "@project-octant/plugin/components/button-group";
 import { SummaryFactory } from "@project-octant/plugin/components/summary";
+
+import { router } from "./routes";
 
 // This plugin will handle v1/Pod types.
 let podGVK = { version: "v1", kind: "Pod" };
@@ -41,11 +42,10 @@ export default class MyPlugin implements octant.Plugin {
   capabilities = {
     supportPrinterConfig: [podGVK],
     supportTab: [podGVK],
-    actionNames: ["<%= filename %>/testAction", "action.octant.dev/setNamespace"],
+    actionNames: ["action.octant.dev/setNamespace"],
   };
 
-  // Custom plugin properties
-  actionCount: number;
+  // We want to keep track of the current selected namespace
   currentNamespace: Subject<string>;
 
   // Octant expects plugin constructors to accept two arguments, the dashboardClient and the httpClient
@@ -56,8 +56,6 @@ export default class MyPlugin implements octant.Plugin {
     this.dashboardClient = dashboardClient;
     this.httpClient = httpClient;
 
-    // set intial actionCount
-    this.actionCount = 0;
     this.currentNamespace = new BehaviorSubject("default");
   }
 
@@ -77,10 +75,10 @@ export default class MyPlugin implements octant.Plugin {
 
     let cardA = new CardFactory({
       body: new TextFactory({
-        value: "actionCount: " + this.actionCount + "\ncard body 1",
+        value: "Extra information about this resource.",
       }).toComponent(),
       factoryMetadata: {
-        title: [new TextFactory({ value: "Card 1" }).toComponent()],
+        title: [new TextFactory({ value: "Extra Information" }).toComponent()],
       },
     });
 
@@ -90,26 +88,26 @@ export default class MyPlugin implements octant.Plugin {
   }
 
   actionHandler(request: octant.ActionRequest): octant.ActionResponse | void {
-    if (request.actionName === "<%= filename %>/testAction") {
-      this.actionCount += 1;
-      return;
-    }
-
     if (request.actionName === "action.octant.dev/setNamespace") {
       this.currentNamespace.next(request.payload.namespace);
       return;
     }
-
     return;
   }
 
   tabHandler(request: octant.ObjectRequest): octant.TabResponse {
     let cardA = new CardFactory({
       body: new TextFactory({ value: "card body A" }).toComponent(),
+      factoryMetadata: {
+        title: [new TextFactory({ value: "Card A" }).toComponent()],
+      },
     }).toComponent();
 
     let cardB = new CardFactory({
       body: new TextFactory({ value: "card body B" }).toComponent(),
+      factoryMetadata: {
+        title: [new TextFactory({ value: "Card B" }).toComponent()],
+      },
     }).toComponent();
 
     let layout = new FlexLayoutFactory({
@@ -127,53 +125,13 @@ export default class MyPlugin implements octant.Plugin {
   }
 
   navigationHandler(): octant.Navigation {
-    let nav = new h.Navigation("Yeoman Plugin", "<%= filename %>", "cloud");
-    nav.add("test menu flyout", "nested-path", "folder");
+    const nav = new h.Navigation("<%= name %>", "<%= filename %>", "cloud");
+    nav.add("Entities", "entities");
     return nav;
   }
 
   contentHandler(request: octant.ContentRequest): octant.ContentResponse {
-    let contentPath = request.contentPath;
-    let title = [new TextFactory({ value: "<%= name %>" })];
-    if (contentPath.length > 0) {
-      title.push(new TextFactory({ value: contentPath }));
-    }
-
-    let namespace = "<unknown>";
-    this.currentNamespace.subscribe((data) => {
-      namespace = data;
-    });
-
-    let cardA = new CardFactory({
-      body: new TextFactory({
-        value: "actionCount: " + this.actionCount + "\ncard body 1",
-      }).toComponent(),
-      factoryMetadata: {
-        title: [new TextFactory({ value: "Card 1" }).toComponent()],
-      },
-    });
-
-    let cardB = new CardFactory({
-      body: new TextFactory({ value: "card body 2" }).toComponent(),
-      factoryMetadata: {
-        title: [new TextFactory({ value: "Card 2" }).toComponent()],
-      },
-    });
-
-    const testButton = {
-      name: "Test",
-      payload: { action: "<%= filename %>/testAction", foo: "bar" },
-      confirmation: {
-        title: "Confirmation?",
-        body: "Confirm this button click",
-      },
-    };
-
-    let buttonGroup = new ButtonGroupFactory({
-      buttons: [testButton],
-    });
-
-    return h.createContentResponse(title, [cardA, cardB], buttonGroup);
+    return h.contentResponseFromRouter(this, router, request);
   }
 }
 

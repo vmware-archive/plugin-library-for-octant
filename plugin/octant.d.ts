@@ -158,6 +158,9 @@ export interface Plugin {
   description: string;
   isModule: boolean;
 
+  readonly dashboardClient: DashboardClient;
+  readonly httpClient: HTTPClient;
+
   capabilities: Capabilities;
 
   tabHandler?: (request: ObjectRequest) => TabResponse;
@@ -214,6 +217,17 @@ export interface Navigation {
  */
 export interface ContentResponse {
   content: Content;
+}
+
+interface GridAction {
+  name: string;
+  actionPath: string;
+  payload: { [key: string]: any };
+  confirmation?: {
+    title: string;
+    body: string;
+  };
+  type: string;
 }
 
 export interface PathItem {
