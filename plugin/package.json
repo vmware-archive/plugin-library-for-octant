@@ -20,5 +20,8 @@
     "url": "https://github.com/vmware-tanzu/plugin-library-for-octant/issues"
   },
   "homepage": "https://github.com/vmware-tanzu/plugin-library-for-octant#readme",
-  "main": "octant.d.ts"
+  "main": "octant.d.ts",
+  "dependencies": {
+    "route-recognizer": "^0.3.4"
+  }
 }

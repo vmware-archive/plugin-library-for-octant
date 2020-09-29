@@ -21,11 +21,9 @@ export interface Key {
 
 /**
  * ObjectRequest defines the request object passed in to print, tab, and objectStatus handlers.
- * @property {DashboardClient} client - provided by the plugin runtime for performing API operations.
  * @property {object} object - resource of the request, for example a Pod or Deployment
  */
 export interface ObjectRequest {
-  readonly client: DashboardClient;
   readonly object: any;
 }
 
@@ -51,23 +49,19 @@ export interface ObjectStatusResponse {
 
 /**
  * ActionRequest defines the request object passed in to an action handler.
- * @property {DashboardClient} client - provided by the plugin runtime for performing API operations.
  * @property {string} actionName - name of the action being sent, match this to dispatch to different handlers.
  * @property {any} payload - action payload
  */
 export interface ActionRequest {
-  readonly client: DashboardClient;
   readonly actionName: string;
   readonly payload: any;
 }
 
 /**
  * ContentRequest defines the request object passed in to a content handler.
- * @property {DashboardClient} client - client provided by the plugin runtime for performing API operations.
  * @property {string} contentPath - full content path of the request, parse this to handle child navigation.
  */
 export interface ContentRequest {
-  readonly client: DashboardClient;
   readonly contentPath: string;
 }
 
@@ -92,8 +86,6 @@ export interface Ref {
 
 /**
  * DashboardClient provides API operations to Octant plugins.
- * This client is provided with every request to ensure that the namespace and context
- * match the current selected namespace and context in Octant.
  */
 export interface DashboardClient {
   /**
@@ -176,6 +168,16 @@ export interface Plugin {
   actionHandler?: (request: ActionRequest) => ActionResponse | void;
 }
 
+/**
+ * PluginConstructor defines the expected constructor signature for Octant TypeScript plugins.
+ * The dashboard and http clients are injected in to the constructor by the plugin runtime.
+ * @param dashboardClient client for interacting with the Kubernetes API
+ * @param httpClient client for making HTTP calls
+ */
+export interface PluginConstructor {
+  new (dashboardClient: DashboardClient, httpClient: HTTPClient): Plugin;
+}
+
 export interface GroupVersionKind {
   group?: string;
   version: string;
@@ -194,6 +196,9 @@ export interface Capabilities {
   actionNames?: string[];
 }
 
+/**
+ * Navigation defines the expected object for the Navigation handler for module plugins.
+ */
 export interface Navigation {
   module?: string;
   title: string;

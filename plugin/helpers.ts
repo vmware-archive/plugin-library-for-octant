@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import RouteRecognizer from "route-recognizer";
 import * as octant from "./octant";
 
 import {
@@ -15,11 +16,12 @@ import { SummaryFactory } from "./components/summary";
 import { TableFactory } from "./components/table";
 import { Component } from "./components/component";
 import { LinkConfig, LinkFactory } from "./components/link";
+import { TextFactory } from "./components/text";
 
 /**
  * TableRow represents a single row in a table.
  */
-export type TableRow = { [key: string]: Component<any> };
+export type TableRow = { [key: string]: ComponentFactory<any> };
 
 /**
  * TableFilters represents any local data filters the table should render with.
@@ -89,6 +91,126 @@ export const createContentResponse = (
 };
 
 /**
+ * contentResponseFromRouter will attempt to lookup the handler for the request.contentPath
+ * from the RouteRecgnizer. Route handlers are expected to have the following signatures:
+ *
+ *  this: {
+ *     dashboardClient: octant.DashboardClient;
+ *     httpClient: octant.HTTPClient;
+ *  },
+ *  params: any,
+ *  request: octant.ContentRequest
+ *
+ * @param request the current ContentRequest
+ * @param router a RouteRecognizer
+ */
+export const contentResponseFromRouter = (
+  router: RouteRecognizer,
+  request: octant.ContentRequest,
+  dashboardClient: octant.DashboardClient,
+  httpClient: octant.HTTPClient
+): octant.ContentResponse => {
+  // routes defined in routes.ts
+  // handlers defined in content.ts
+  const contentPath = request.contentPath;
+
+  // Default case, no extra path.
+  if (contentPath === "") {
+    if (router.hasRoute("default")) {
+      const handlers = router.handlersFor("default");
+      try {
+        if (handlers.length > 1) {
+          throw new Error("root: more than one default handler found");
+        }
+        const { handler, params } = handlers[0];
+        return handler.call(
+          { dashboardClient: dashboardClient, httpClient: httpClient },
+          Object.assign({}, params, request)
+        );
+      } catch (e) {
+        const title = [
+          new TextFactory({ value: "Error Routing" }),
+          new TextFactory({ value: request.contentPath }),
+        ];
+        return createContentResponse(title, [
+          new TextFactory({
+            value: JSON.stringify(e),
+          }),
+        ]);
+      }
+    }
+  }
+
+  // Not found case
+  const results: any = router.recognize(contentPath);
+  if (!results) {
+    if (router.hasRoute("notFound")) {
+      const handlers = router.handlersFor("notFound");
+      try {
+        if (handlers.length > 1) {
+          throw new Error("no match: more than one notFound handler found");
+        }
+        const { handler, params } = handlers[0];
+        return handler.call(
+          { dashboardClient: dashboardClient, httpClient: httpClient },
+          Object.assign({}, params, request)
+        );
+      } catch (e) {
+        const title = [
+          new TextFactory({ value: "Error Routing" }),
+          new TextFactory({ value: request.contentPath }),
+        ];
+        return createContentResponse(title, [
+          new TextFactory({
+            value: JSON.stringify(e),
+          }),
+        ]);
+      }
+    } else {
+      const title = [
+        new TextFactory({ value: "Not Found" }),
+        new TextFactory({ value: request.contentPath }),
+      ];
+      return createContentResponse(title, [
+        new TextFactory({
+          value: "Not found: " + request.contentPath,
+          factoryMetadata: { title: title.map((e) => e.toComponent()) },
+        }),
+      ]);
+    }
+  }
+
+  // Dispatch to route handler
+  const { handler, params } = results[0];
+  try {
+    return handler.call(
+      { dashboardClient: dashboardClient, httpClient: httpClient },
+      Object.assign({}, params, request)
+    );
+  } catch (e) {
+    try {
+      const handlers = router.handlersFor("notFound");
+      if (handlers.length > 1) {
+        throw new Error("dispatch: more than one notFound handler found");
+      }
+      return handlers[0]();
+    } catch (e) {
+      console.error(JSON.stringify(e));
+    }
+  }
+
+  const title = [
+    new TextFactory({ value: "Bad Route" }),
+    new TextFactory({ value: request.contentPath }),
+  ];
+  return createContentResponse(title, [
+    new TextFactory({
+      value: "Check your router and navigation configuration.",
+    }),
+  ]);
+};
+
+/**
  * Width of the component
  */
 export enum Width {
@@ -138,15 +260,16 @@ export class Navigation implements octant.Navigation {
  * TableFactoryBuilder aids in building TableFactory instances.
  */
 export class TableFactoryBuilder {
+  private _title: ComponentFactory<any>[];
   private _columns: string[];
-  private _rows: { [key: string]: Component<any> }[];
+  private _rows: { [key: string]: ComponentFactory<any> }[];
   private _emptyContent: string;
   private _loading: boolean;
   private _filters: TableFilters;
   private factoryMetadata: FactoryMetadata | undefined;
 
   /**
-   *
+   * @param title Title for the component
    * @param columns titles for each column in the table
    * @param rows initial set of rows
    * @param emptyContent message to display when there are no rows, defaults to "No results found!"
@@ -155,19 +278,31 @@ export class TableFactoryBuilder {
    * @param factoryMetadata allows for changing the title or accessor of the underlying TableFactory
    */
   constructor(
+    title: ComponentFactory<any>[],
     columns: string[],
-    rows?: { [key: string]: Component<any> }[],
+    rows?: { [key: string]: ComponentFactory<any> }[],
     emptyContent?: string,
     loading?: boolean,
     filters?: TableFilters,
     factoryMetadata?: FactoryMetadata
   ) {
+    this._title = title;
     this._columns = columns;
     this._rows = rows ? rows : [];
     this._emptyContent = emptyContent ? emptyContent : "No results found!";
     this._loading = loading ? loading : false;
     this._filters = filters ? filters : {};
     this.factoryMetadata = factoryMetadata;
+  }
+
+  /**
+   * @property {string} title message to dispaly when there is no table content
+   */
+  public get title(): ComponentFactory<any>[] {
+    return this._title;
+  }
+  public set title(title: ComponentFactory<any>[]) {
+    this._title = title;
   }
 
   /**
@@ -232,10 +367,22 @@ export class TableFactoryBuilder {
       name: name,
       accessor: name,
     }));
-    const rows = this._rows;
+
+    const rows = this._rows.map((row) => {
+      let componentRow = {} as { [key: string]: Component<any> };
+      Object.keys(row).forEach((v) => {
+        componentRow[v] = row[v].toComponent();
+      });
+      return componentRow;
+    });
+
     const emptyContent = this.emptyContent;
     const loading = this.loading;
-    const factoryMetadata = this.factoryMetadata;
+
+    let factoryMetadata = this.factoryMetadata;
+    if (!factoryMetadata) {
+      factoryMetadata = { title: this._title.map((t) => t.toComponent()) };
+    }
 
     return new TableFactory({
       columns,
@@ -269,7 +416,7 @@ export const genLinkFromObject = <T>(
 };
 
 /**
- * 
+ *
  * @param ref Ref object to generate a link from.
  * @param client DashboardClient
  */
@@ -279,4 +426,16 @@ export const genLink = (
 ): Component<LinkConfig> => {
   const path = client.RefPath(ref);
   return new LinkFactory({ value: ref.name, ref: path }).toComponent();
+};
+
+/**
+ * navigationFromRouter returns an Octant navigation object for use with the Navigation handler.
+ */
+export const navigationFromRouter = (
+  router: RouteRecognizer
+): octant.Navigation => {
+  const results = router.recognize("/");
+  console.log(JSON.stringify(results));
+  console.log("testy");
+  return new Navigation("My title", "my-path", "cloud");
 };
