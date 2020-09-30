@@ -26,7 +26,8 @@ import { router } from "./routes";
 // This plugin will handle v1/Pod types.
 let podGVK = { version: "v1", kind: "Pod" };
 
-export default class MyPlugin implements octant.Plugin {
+const <%= pluginClass %>: octant.PluginConstructor = class <%= pluginClass %>
+  implements octant.Plugin {
   // Static fields that Octant uses
   name = "<%= filename %>";
   description = "<%= description %>";
@@ -134,5 +135,7 @@ export default class MyPlugin implements octant.Plugin {
     return h.contentResponseFromRouter(this, router, request);
   }
 }
+
+export default <%= pluginClass %>;
 
 console.log("loading <%= filename %>.ts");

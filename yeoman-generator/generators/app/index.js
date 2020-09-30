@@ -36,6 +36,7 @@ module.exports = class extends Generator {
 
         return this.prompt(prompts).then(props => {
             this.props = props;
+            this.props.pluginClass = changeCase.pascalCase(props.name);
             this.props.filename = changeCase.paramCase(props.name);
             this.props.isModule = true;
         });
