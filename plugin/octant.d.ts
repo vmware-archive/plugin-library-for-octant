@@ -16,7 +16,26 @@ export interface Key {
   apiVersion: string;
   kind: string;
   name?: string;
-  selector?: object;
+  selector?: any;
+  labelSelector?: LabelSelector;
+}
+
+export enum LabelSelectorOperator {
+  OpIn = "In",
+  OpNotIn = "NotIn",
+  OpExists = "Exists",
+  OpNotExists = "DoesNotExist",
+}
+
+export interface LabelSelectorRequirement {
+  key: string;
+  operator: LabelSelectorOperator;
+  values?: string[];
+}
+
+export interface LabelSelector {
+  matchLabels?: { [key: string]: string };
+  matchExpressions?: LabelSelectorRequirement[];
 }
 
 /**
@@ -24,6 +43,7 @@ export interface Key {
  * @property {object} object - resource of the request, for example a Pod or Deployment
  */
 export interface ObjectRequest {
+  readonly clientID: string;
   readonly object: any;
 }
 
@@ -53,6 +73,7 @@ export interface ObjectStatusResponse {
  * @property {any} payload - action payload
  */
 export interface ActionRequest {
+  readonly clientID: string;
   readonly actionName: string;
   readonly payload: any;
 }
@@ -62,6 +83,7 @@ export interface ActionRequest {
  * @property {string} contentPath - full content path of the request, parse this to handle child navigation.
  */
 export interface ContentRequest {
+  readonly clientID: string;
   readonly contentPath: string;
 }
 
@@ -122,6 +144,17 @@ export interface DashboardClient {
    * create links to resources in Octant
    */
   RefPath(object: Ref): string;
+  /**
+   * SendEvent will send an event to the clientID provided.
+   * @param clientID the clientID the event should be sent to
+   * @param eventType the eventType, e.g. event.octant.dev/alert, see pkg/event/event.go for a full list
+   * @param payload the payload for the event.
+   */
+  SendEvent(
+    clientID: string,
+    eventType: string,
+    payload: { [key: string]: string | number }
+  ): void;
 }
 
 /**

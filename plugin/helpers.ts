@@ -20,9 +20,28 @@ import { LinkConfig, LinkFactory } from "./components/link";
 import { TextFactory } from "./components/text";
 
 /**
- * TableRow represents a single row in a table.
+ * RowData represents a single set of user row data in a table.
  */
-export type TableRow = { [key: string]: ComponentFactory<any> };
+export type RowData = { [key: string]: ComponentFactory<any> };
+
+/**
+ * TableRow holds the data for a single row in a table and optionally and grid actions for that row.
+ * Setting isDeleted to true will result in the deleting indictor style being applied to the row.
+ */
+export class TableRow {
+  data: RowData;
+  gridActions: GridActionsFactory | undefined;
+  isDeleting: boolean | undefined;
+
+  constructor(
+    rowData: RowData,
+    options?: { gridActions?: GridActionsFactory; isDeleting?: boolean }
+  ) {
+    this.data = rowData;
+    this.gridActions = options?.gridActions;
+    this.isDeleting = options?.isDeleting;
+  }
+}
 
 /**
  * TableFilters represents any local data filters the table should render with.
@@ -46,11 +65,13 @@ export const createPrintResponse = (
   items?: { width: number; view: ComponentFactory<any> }[]
 ): octant.PrintResponse => {
   return {
-    config: config?.toComponent().config.sections,
-    status: status?.toComponent().config.sections,
-    items: items?.map((i) => {
-      return { width: i.width, view: i.view.toComponent() };
-    }),
+    config: config ? config?.toComponent().config.sections : [],
+    status: status ? status?.toComponent().config.sections : [],
+    items: items
+      ? items?.map((i) => {
+          return { width: i.width, view: i.view.toComponent() };
+        })
+      : [],
   };
 };
 
@@ -243,8 +264,7 @@ export class Navigation implements octant.Navigation {
 export class TableFactoryBuilder {
   private _title: ComponentFactory<any>[];
   private _columns: string[];
-  private _rows: { [key: string]: ComponentFactory<any> }[];
-  private _gridActions: GridActionsFactory | undefined;
+  private _rows: TableRow[];
   private _emptyContent: string;
   private _loading: boolean;
   private _filters: TableFilters;
@@ -255,7 +275,6 @@ export class TableFactoryBuilder {
    * @param columns titles for each column in the table
    * @param rows initial set of rows
    * @param emptyContent message to display when there are no rows, defaults to "No results found!"
-   * @param gridActions actions to make available for each row of the table
    * @param loading display the loading indicator on the table
    * @param filters set any data filters on the table
    * @param factoryMetadata allows for changing the title or accessor of the underlying TableFactory
@@ -263,9 +282,8 @@ export class TableFactoryBuilder {
   constructor(
     title: ComponentFactory<any>[],
     columns: string[],
-    rows?: { [key: string]: ComponentFactory<any> }[],
+    rows?: TableRow[],
     emptyContent?: string,
-    gridActions?: GridActionsFactory,
     loading?: boolean,
     filters?: TableFilters,
     factoryMetadata?: FactoryMetadata
@@ -273,21 +291,10 @@ export class TableFactoryBuilder {
     this._title = title;
     this._columns = columns;
     this._rows = rows ? rows : [];
-    this._gridActions = gridActions;
     this._emptyContent = emptyContent ? emptyContent : "No results found!";
     this._loading = loading ? loading : false;
     this._filters = filters ? filters : {};
     this.factoryMetadata = factoryMetadata;
-  }
-
-  /**
-   * @property {GridActionsFactory} gridActions holds a list of grid actions for each row
-   */
-  public get gridActions(): GridActionsFactory | undefined {
-    return this._gridActions;
-  }
-  public set gridActions(gridActions: GridActionsFactory | undefined) {
-    this._gridActions = gridActions;
   }
 
   /**
@@ -364,12 +371,17 @@ export class TableFactoryBuilder {
     }));
 
     const rows = this._rows.map((row) => {
-      let componentRow = {} as { [key: string]: Component<any> };
-      Object.keys(row).forEach((v) => {
-        componentRow[v] = row[v].toComponent();
+      let componentRow = {} as { [key: string]: any };
+      Object.keys(row.data).forEach((v) => {
+        componentRow[v] = row.data[v].toComponent();
       });
-      if (this._gridActions) {
-        componentRow["_action"] = this._gridActions.toComponent();
+      if (row.gridActions) {
+        componentRow["_action"] = row.gridActions.toComponent();
+      }
+      if (row.isDeleting) {
+        componentRow["_isDeleted"] = new TextFactory({
+          value: "deleted",
+        }).toComponent();
       }
       return componentRow;
     });
@@ -393,6 +405,16 @@ export class TableFactoryBuilder {
   }
 }
 
+export const refFromObject = (object: any): octant.Ref => {
+  const ref: octant.Ref = {
+    namespace: object.metadata.namespace,
+    apiVersion: object.apiVersion,
+    kind: object.kind,
+    name: object.metadata.name,
+  };
+  return ref;
+};
+
 /**
  * genLinkFromObject generates an Octant link to a resource. This helper wraps
  * genLink and attempts to create a Ref object from the object passed in.
@@ -403,14 +425,7 @@ export const genLinkFromObject = <T>(
   object: any,
   client: octant.DashboardClient
 ): Component<LinkConfig> => {
-  const ref: octant.Ref = {
-    namespace: object.metadata.namespace,
-    apiVersion: object.apiVersion,
-    kind: object.kind,
-    name: object.metadata.name,
-  };
-
-  return genLink(ref, client);
+  return genLink(refFromObject(object), client);
 };
 
 /**
