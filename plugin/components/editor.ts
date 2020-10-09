@@ -10,6 +10,7 @@ import { Component } from './component';
 
 export interface EditorConfig {
   value: string;
+  language: string;
   readOnly: boolean;
   metadata: { [key: string]: string };
   submitAction?: string;
@@ -23,6 +24,7 @@ export interface EditorOptions {
 
 interface EditorParameters {
   value: string;
+  language: string;
   readOnly: boolean;
   metadata: { [key: string]: string };
   options?: EditorOptions;
@@ -31,6 +33,7 @@ interface EditorParameters {
 
 export class EditorFactory implements ComponentFactory<EditorConfig> {
   private readonly value: string;
+  private readonly language: string;
   private readonly readOnly: boolean;
   private readonly metadata: { [key: string]: string };
   private readonly submitAction: string | undefined;
@@ -39,12 +42,14 @@ export class EditorFactory implements ComponentFactory<EditorConfig> {
 
   constructor({
     value,
+    language,
     readOnly,
     metadata,
     options,
     factoryMetadata,
   }: EditorParameters) {
     this.value = value;
+    this.language = language;
     this.readOnly = readOnly;
     this.metadata = metadata;
     this.factoryMetadata = factoryMetadata;
@@ -63,6 +68,7 @@ export class EditorFactory implements ComponentFactory<EditorConfig> {
       },
       config: {
         value: this.value,
+        language: this.language,
         readOnly: this.readOnly,
         metadata: this.metadata,
 
