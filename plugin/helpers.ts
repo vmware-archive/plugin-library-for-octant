@@ -268,6 +268,7 @@ export class TableFactoryBuilder {
   private _emptyContent: string;
   private _loading: boolean;
   private _filters: TableFilters;
+  private _buttonGroup?: ButtonGroupFactory;
   private factoryMetadata: FactoryMetadata | undefined;
 
   /**
@@ -348,6 +349,16 @@ export class TableFactoryBuilder {
   }
 
   /**
+   * @property {ButtonGroupFactory | undefined} buttonGroup action buttons rendered next to the table header.
+   */
+  public get buttonGroup(): ButtonGroupFactory | undefined {
+    return this._buttonGroup;
+  }
+  public set buttonGroup(b: ButtonGroupFactory | undefined) {
+    this._buttonGroup = b;
+  }
+
+  /**
    *
    * @param rows a TableRow or Array of TableRow to push in to the table.
    */
@@ -400,7 +411,10 @@ export class TableFactoryBuilder {
       emptyContent,
       loading: loading,
       filters: {},
-      factoryMetadata: factoryMetadata,
+      options: {
+        ...(this._buttonGroup && { buttonGroup: this._buttonGroup.toComponent() }),
+      },
+      factoryMetadata,
     });
   }
 }
