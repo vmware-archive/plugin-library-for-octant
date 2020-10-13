@@ -11,11 +11,13 @@ import { Component } from './component';
 export interface TextConfig {
   value: string;
   isMarkdown?: boolean;
+  trustedContent?: boolean;
   status?: number;
 }
 
 export interface TextOptions {
   isMarkdown?: boolean;
+  trustedContent?: boolean;
   status?: number;
 }
 
@@ -28,6 +30,7 @@ interface TextParameters {
 export class TextFactory implements ComponentFactory<TextConfig> {
   private readonly value: string;
   private readonly isMarkdown: boolean | undefined;
+  private readonly trustedContent: boolean | undefined;
   private readonly status: number | undefined;
   private readonly factoryMetadata: FactoryMetadata | undefined;
 
@@ -37,6 +40,7 @@ export class TextFactory implements ComponentFactory<TextConfig> {
 
     if (options) {
       this.isMarkdown = options.isMarkdown;
+      this.trustedContent = options.trustedContent;
       this.status = options.status;
     }
   }
@@ -51,6 +55,7 @@ export class TextFactory implements ComponentFactory<TextConfig> {
         value: this.value,
 
         ...(this.isMarkdown && { isMarkdown: this.isMarkdown }),
+        ...(this.trustedContent && { trustedContent: this.trustedContent }),
         ...(this.status && { status: this.status }),
       },
     };
