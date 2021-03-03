@@ -113,15 +113,17 @@ export interface DashboardClient {
   /**
    * Get attempts to fetch a resource using the key provided
    * @param key - the key of the object to be fetched
+   * @param metadata - Optional arbitrary contexual data sent to octant
    * @throws will throw an exception if there is an error with the request
    */
-  Get(key: Key): any;
+  Get(key: Key, metadata?: Record<string, any>): any;
   /**
    * List attempts to fetch a list of all the resources matching the provided key
    * @param key - the key of the objects to list
+   * @param metadata - Optional arbitrary contexual data sent to octant
    * @throws will throw an exception if there is an error during the request
    */
-  List(key: Key): any[];
+  List(key: Key, metadata?: Record<string, any>): any[];
   /**
    * Update will apply the YAML in to the provided namespace. Use this to Create and Update resources in the cluster.
    * When there are multiple resources in the YAML, they will be applied in order.
@@ -129,15 +131,17 @@ export interface DashboardClient {
    * @param namespace - namespace for the resource, if empty, current Octant namespace will be used, if
    * namespace is set in the YAMl that will always take precedence over this param
    * @param yaml - YAML to apply, can contain multiple resources
+   * @param metadata - Optional arbitrary contexual data sent to octant
    * @throws will throw an exception if there is an error during the request
    */
-  Update(namespace: string, yaml: string): string;
+  Update(namespace: string, yaml: string, metadata?: Record<string, any>): string;
   /**
    * Delete deletes a an object identified by the key.
    * @param key The key of the object to be deleted
+   * @param metadata - Optional arbitrary contexual data sent to octant
    * @throws Will throw an exception if the key is invalid or the delete fails.
    */
-  Delete(key: Key): never;
+  Delete(key: Key, metadata?: Record<string, any>): never;
   /**
    * RefPath generates an Octant reference path using the details of the Ref provided.
    * @param object - object to renerate the reference path for. Reference paths can be used with LinkFactory to
