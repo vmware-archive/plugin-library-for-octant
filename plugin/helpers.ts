@@ -18,7 +18,6 @@ import { TableFactory } from "./components/table";
 import { Component } from "./components/component";
 import { LinkConfig, LinkFactory } from "./components/link";
 import { TextFactory } from "./components/text";
-import { DashboardClientMetadata } from "./octant";
 
 /**
  * RowData represents a single set of user row data in a table.
@@ -133,7 +132,7 @@ export const contentResponseFromRouter = (
   plugin: octant.Plugin,
   router: RouteRecognizer,
   request: octant.ContentRequest,
-  metadata?: DashboardClientMetadata,
+  metadata?: Record<string, string>,
 ): octant.ContentResponse => {
   // routes defined in routes.ts
   // handlers defined in content.ts

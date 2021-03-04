@@ -116,14 +116,14 @@ export interface DashboardClient {
    * @param metadata - Optional arbitrary contexual data sent to octant
    * @throws will throw an exception if there is an error with the request
    */
-  Get(key: Key, metadata?: Record<string, any>): any;
+  Get(key: Key, metadata?: Record<string, string>): any;
   /**
    * List attempts to fetch a list of all the resources matching the provided key
    * @param key - the key of the objects to list
    * @param metadata - Optional arbitrary contexual data sent to octant
    * @throws will throw an exception if there is an error during the request
    */
-  List(key: Key, metadata?: Record<string, any>): any[];
+  List(key: Key, metadata?: Record<string, string>): any[];
   /**
    * Update will apply the YAML in to the provided namespace. Use this to Create and Update resources in the cluster.
    * When there are multiple resources in the YAML, they will be applied in order.
@@ -134,14 +134,14 @@ export interface DashboardClient {
    * @param metadata - Optional arbitrary contexual data sent to octant
    * @throws will throw an exception if there is an error during the request
    */
-  Update(namespace: string, yaml: string, metadata?: Record<string, any>): string;
+  Update(namespace: string, yaml: string, metadata?: Record<string, string>): string;
   /**
    * Delete deletes a an object identified by the key.
    * @param key The key of the object to be deleted
    * @param metadata - Optional arbitrary contexual data sent to octant
    * @throws Will throw an exception if the key is invalid or the delete fails.
    */
-  Delete(key: Key, metadata?: Record<string, any>): never;
+  Delete(key: Key, metadata?: Record<string, string>): never;
   /**
    * RefPath generates an Octant reference path using the details of the Ref provided.
    * @param object - object to generate the reference path for. Reference paths can be used with LinkFactory to
