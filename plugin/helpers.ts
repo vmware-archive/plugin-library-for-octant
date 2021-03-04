@@ -18,6 +18,7 @@ import { TableFactory } from "./components/table";
 import { Component } from "./components/component";
 import { LinkConfig, LinkFactory } from "./components/link";
 import { TextFactory } from "./components/text";
+import { DashboardClientMetadata } from "./octant";
 
 /**
  * RowData represents a single set of user row data in a table.
@@ -125,11 +126,13 @@ export const createContentResponse = (
  *
  * @param request the current ContentRequest
  * @param router a RouteRecognizer
+ * @param metadata from the dashboard client, sent to the handler
  */
 export const contentResponseFromRouter = (
   plugin: octant.Plugin,
   router: RouteRecognizer,
-  request: octant.ContentRequest
+  request: octant.ContentRequest,
+  metadata?: DashboardClientMetadata,
 ): octant.ContentResponse => {
   // routes defined in routes.ts
   // handlers defined in content.ts
@@ -144,7 +147,7 @@ export const contentResponseFromRouter = (
           throw new Error("root: more than one default handler found");
         }
         const { handler, params } = handlers[0];
-        return handler.call(plugin, Object.assign({}, request, params));
+        return handler.call(plugin, Object.assign({}, request, params), metadata);
       } catch (e) {
         const title = [
           new TextFactory({ value: "Error Routing" }),
@@ -169,7 +172,7 @@ export const contentResponseFromRouter = (
           throw new Error("no match: more than one notFound handler found");
         }
         const { handler, params } = handlers[0];
-        return handler.call(plugin, Object.assign({}, request, params));
+        return handler.call(plugin, Object.assign({}, request, params), metadata);
       } catch (e) {
         const title = [
           new TextFactory({ value: "Error Routing" }),
@@ -198,7 +201,7 @@ export const contentResponseFromRouter = (
   // Dispatch to route handler
   const { handler, params } = results[0];
   try {
-    return handler.call(plugin, Object.assign({}, request, params));
+    return handler.call(plugin, Object.assign({}, request, params), metadata);
   } catch (e) {
     try {
       const handlers = router.handlersFor("notFound");
