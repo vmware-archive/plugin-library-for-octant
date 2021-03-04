@@ -9,7 +9,7 @@ import { ExtensionConfig } from "./components/extension";
 import { PodStatusConfig } from "./components/pod-status";
 
 /**
- * Key defines the interface expected for request keys when performing actions using the DashboadClient.
+ * Key defines the interface expected for request keys when performing actions using the DashboardClient.
  */
 export interface Key {
   namespace?: string;
@@ -144,7 +144,7 @@ export interface DashboardClient {
   Delete(key: Key, metadata?: Record<string, any>): never;
   /**
    * RefPath generates an Octant reference path using the details of the Ref provided.
-   * @param object - object to renerate the reference path for. Reference paths can be used with LinkFactory to
+   * @param object - object to generate the reference path for. Reference paths can be used with LinkFactory to
    * create links to resources in Octant
    */
   RefPath(object: Ref): string;

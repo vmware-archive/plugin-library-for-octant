@@ -27,7 +27,7 @@ export type RowData = { [key: string]: ComponentFactory<any> };
 
 /**
  * TableRow holds the data for a single row in a table and optionally and grid actions for that row.
- * Setting isDeleted to true will result in the deleting indictor style being applied to the row.
+ * Setting isDeleted to true will result in the deleting indicator style being applied to the row.
  */
 export class TableRow {
   data: RowData;
@@ -124,6 +124,7 @@ export const createContentResponse = (
  *  params: any,
  *  request: octant.ContentRequest
  *
+ * @param plugin
  * @param request the current ContentRequest
  * @param router a RouteRecognizer
  * @param metadata from the dashboard client, sent to the handler
