@@ -26,7 +26,7 @@ export type RowData = { [key: string]: ComponentFactory<any> };
 
 /**
  * TableRow holds the data for a single row in a table and optionally and grid actions for that row.
- * Setting isDeleted to true will result in the deleting indictor style being applied to the row.
+ * Setting isDeleted to true will result in the deleting indicator style being applied to the row.
  */
 export class TableRow {
   data: RowData;
@@ -123,13 +123,16 @@ export const createContentResponse = (
  *  params: any,
  *  request: octant.ContentRequest
  *
+ * @param plugin
  * @param request the current ContentRequest
  * @param router a RouteRecognizer
+ * @param customStoreContext from the dashboard client, sent to the handler
  */
 export const contentResponseFromRouter = (
   plugin: octant.Plugin,
   router: RouteRecognizer,
-  request: octant.ContentRequest
+  request: octant.ContentRequest,
+  customStoreContext?: Record<string, string>,
 ): octant.ContentResponse => {
   // routes defined in routes.ts
   // handlers defined in content.ts
@@ -144,7 +147,7 @@ export const contentResponseFromRouter = (
           throw new Error("root: more than one default handler found");
         }
         const { handler, params } = handlers[0];
-        return handler.call(plugin, Object.assign({}, request, params));
+        return handler.call(plugin, Object.assign({}, request, params), customStoreContext);
       } catch (e) {
         const title = [
           new TextFactory({ value: "Error Routing" }),
@@ -169,7 +172,7 @@ export const contentResponseFromRouter = (
           throw new Error("no match: more than one notFound handler found");
         }
         const { handler, params } = handlers[0];
-        return handler.call(plugin, Object.assign({}, request, params));
+        return handler.call(plugin, Object.assign({}, request, params), customStoreContext);
       } catch (e) {
         const title = [
           new TextFactory({ value: "Error Routing" }),
@@ -198,7 +201,7 @@ export const contentResponseFromRouter = (
   // Dispatch to route handler
   const { handler, params } = results[0];
   try {
-    return handler.call(plugin, Object.assign({}, request, params));
+    return handler.call(plugin, Object.assign({}, request, params), customStoreContext);
   } catch (e) {
     try {
       const handlers = router.handlersFor("notFound");
