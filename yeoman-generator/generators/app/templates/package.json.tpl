@@ -42,7 +42,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@project-octant/plugin": "^0.1.0",
+    "@project-octant/plugin": "^0.2.2",
     "@kubernetes/client-node": "^0.12.0",
     "regenerator-runtime": "^0.13.5",
     "route-recognizer": "^0.3.4",
