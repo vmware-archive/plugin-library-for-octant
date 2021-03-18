@@ -46,3 +46,6 @@ package-lock.json
 # Mac OSX Finder files.
 **/.DS_Store
 .DS_Store
+
+# Vim undo files.
+*.un~
