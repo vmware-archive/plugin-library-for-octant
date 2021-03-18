@@ -90,8 +90,8 @@ export function listHandler(
   ];
 
   const table = new h.TableFactoryBuilder(title, ENTITY_COLUMNS);
-  ENTITIES.forEach((entity) => {
-    const row = {
+  const rows = ENTITIES.map(entity => {
+    let rowData = {
       ID: new TextFactory({ value: entity.id.toString() }),
       Name: new LinkFactory({
         value: entity.name,
@@ -108,10 +108,12 @@ export function listHandler(
           .join(""),
         options: { isMarkdown: true },
       }),
-    } as h.TableRow;
-    table.push(row);
+    };
+
+    return new h.TableRow(rowData)
   });
 
+  table.push(rows);
   return h.createContentResponse(title, [table.getFactory()]);
 }
 
