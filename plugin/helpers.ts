@@ -132,7 +132,7 @@ export const contentResponseFromRouter = (
   plugin: octant.Plugin,
   router: RouteRecognizer,
   request: octant.ContentRequest,
-  customStoreContext?: Record<string, string>,
+  customStoreContext?: Record<string, string>
 ): octant.ContentResponse => {
   // routes defined in routes.ts
   // handlers defined in content.ts
@@ -147,7 +147,11 @@ export const contentResponseFromRouter = (
           throw new Error("root: more than one default handler found");
         }
         const { handler, params } = handlers[0];
-        return handler.call(plugin, Object.assign({}, request, params), customStoreContext);
+        return handler.call(
+          plugin,
+          Object.assign({}, request, params),
+          customStoreContext
+        );
       } catch (e) {
         const title = [
           new TextFactory({ value: "Error Routing" }),
@@ -172,7 +176,11 @@ export const contentResponseFromRouter = (
           throw new Error("no match: more than one notFound handler found");
         }
         const { handler, params } = handlers[0];
-        return handler.call(plugin, Object.assign({}, request, params), customStoreContext);
+        return handler.call(
+          plugin,
+          Object.assign({}, request, params),
+          customStoreContext
+        );
       } catch (e) {
         const title = [
           new TextFactory({ value: "Error Routing" }),
@@ -201,7 +209,11 @@ export const contentResponseFromRouter = (
   // Dispatch to route handler
   const { handler, params } = results[0];
   try {
-    return handler.call(plugin, Object.assign({}, request, params), customStoreContext);
+    return handler.call(
+      plugin,
+      Object.assign({}, request, params),
+      customStoreContext
+    );
   } catch (e) {
     try {
       const handlers = router.handlersFor("notFound");
@@ -277,27 +289,32 @@ export class TableFactoryBuilder {
   /**
    * @param title Title for the component
    * @param columns titles for each column in the table
-   * @param rows initial set of rows
-   * @param emptyContent message to display when there are no rows, defaults to "No results found!"
-   * @param loading display the loading indicator on the table
-   * @param filters set any data filters on the table
+   * @param options options provided when creating a new table
+   *    @param rows initial set of rows
+   *    @param emptyContent message to display when there are no rows, defaults to "No results found!"
+   *    @param loading display the loading indicator on the table
+   *    @param filters set any data filters on the table
    * @param factoryMetadata allows for changing the title or accessor of the underlying TableFactory
    */
   constructor(
     title: ComponentFactory<any>[],
     columns: string[],
-    rows?: TableRow[],
-    emptyContent?: string,
-    loading?: boolean,
-    filters?: TableFilters,
+    options?: {
+      rows?: TableRow[];
+      emptyContent?: string;
+      loading?: boolean;
+      filters?: TableFilters;
+    },
     factoryMetadata?: FactoryMetadata
   ) {
     this._title = title;
     this._columns = columns;
-    this._rows = rows ? rows : [];
-    this._emptyContent = emptyContent ? emptyContent : "No results found!";
-    this._loading = loading ? loading : false;
-    this._filters = filters ? filters : {};
+    this._rows = options.rows ? options?.rows : [];
+    this._emptyContent = options.emptyContent
+      ? options?.emptyContent
+      : "No results found!";
+    this._loading = options.loading ? options?.loading : false;
+    this._filters = options.filters ? options?.filters : {};
     this.factoryMetadata = factoryMetadata;
   }
 
@@ -415,7 +432,9 @@ export class TableFactoryBuilder {
       loading: loading,
       filters: {},
       options: {
-        ...(this._buttonGroup && { buttonGroup: this._buttonGroup.toComponent() }),
+        ...(this._buttonGroup && {
+          buttonGroup: this._buttonGroup.toComponent(),
+        }),
       },
       factoryMetadata,
     });
