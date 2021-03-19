@@ -134,7 +134,11 @@ export interface DashboardClient {
    * @param customStoreContext - key/values to add to the context for object store requests, only useful for custom object stores
    * @throws will throw an exception if there is an error during the request
    */
-  Update(namespace: string, yaml: string, customStoreContext?: Record<string, string>): string;
+  Update(
+    namespace: string,
+    yaml: string,
+    customStoreContext?: Record<string, string>
+  ): string;
   /**
    * Delete deletes a an object identified by the key.
    * @param key The key of the object to be deleted
@@ -200,7 +204,7 @@ export interface Plugin {
 
   capabilities: Capabilities;
 
-  tabHandler?: (request: ObjectRequest) => TabResponse;
+  tabHandler?: (request: ObjectRequest) => TabResponse | TabResponse[];
   printHandler?: (request: ObjectRequest) => PrintResponse;
   objectStatusHandler?: (request: ObjectRequest) => ObjectStatusResponse;
   navigationHandler?: () => Navigation;
