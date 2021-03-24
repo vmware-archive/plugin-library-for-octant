@@ -1,4 +1,4 @@
-// core-js and regenerator-runtime are requried to ensure the correct polyfills
+// core-js and regenerator-runtime are required to ensure the correct polyfills
 // are applied by babel/webpack.
 import "core-js/stable";
 import "regenerator-runtime/runtime";
@@ -62,7 +62,7 @@ const <%= pluginClass %>: octant.PluginConstructor = class <%= pluginClass %>
 
   printHandler(request: octant.ObjectRequest): octant.PrintResponse {
     const myText = new TextFactory({
-      value: "my **bold** and *emphisized* test",
+      value: "my **bold** and *emphasized* test",
       options: { isMarkdown: true },
     }).toComponent();
 
