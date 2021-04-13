@@ -54,6 +54,22 @@ export type TableFilters = {
 };
 
 /**
+ *
+ * ClientState holds the partial state shared by octant
+ */
+export type ClientState = {
+  clientID: () => string;
+  namespace: () => string;
+  contextName: () => string;
+  filters: () => [
+    {
+      key: () => string;
+      value: () => string;
+    }
+  ]
+};
+
+/**
  * createPrintResponse generates a PrintResponse
  * @param config config will be appended to the Config card of the resource summary
  * @param status status will be appended to the Status card of the resource summary

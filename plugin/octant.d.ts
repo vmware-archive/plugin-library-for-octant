@@ -7,6 +7,7 @@ import { Component } from "./components/component";
 import { FlexLayoutConfig } from "./components/flexlayout";
 import { ExtensionConfig } from "./components/extension";
 import { PodStatusConfig } from "./components/pod-status";
+import { ClientState } from "./helpers";
 
 /**
  * Key defines the interface expected for request keys when performing actions using the DashboardClient.
@@ -41,10 +42,11 @@ export interface LabelSelector {
 /**
  * ObjectRequest defines the request object passed in to print, tab, and objectStatus handlers.
  * @property {object} object - resource of the request, for example a Pod or Deployment
+ * @property {object} clientState - container for the partial state shared by octant.
  */
 export interface ObjectRequest {
-  readonly clientID: string;
   readonly object: any;
+  readonly clientState: ClientState;
 }
 
 export interface PrintResponse {
@@ -71,20 +73,22 @@ export interface ObjectStatusResponse {
  * ActionRequest defines the request object passed in to an action handler.
  * @property {string} actionName - name of the action being sent, match this to dispatch to different handlers.
  * @property {any} payload - action payload
+ * @property {object} clientState - container for the partial state shared by octant.
  */
 export interface ActionRequest {
-  readonly clientID: string;
   readonly actionName: string;
   readonly payload: any;
+  readonly clientState: ClientState;
 }
 
 /**
  * ContentRequest defines the request object passed in to a content handler.
  * @property {string} contentPath - full content path of the request, parse this to handle child navigation.
+ * @property {object} clientState - container for the partial state shared by octant.
  */
 export interface ContentRequest {
-  readonly clientID: string;
   readonly contentPath: string;
+  readonly clientState: ClientState;
 }
 
 export interface ActionResponse {
