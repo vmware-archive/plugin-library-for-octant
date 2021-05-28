@@ -8,6 +8,8 @@
 import { ComponentFactory, FactoryMetadata } from './component-factory';
 import { Component } from './component';
 
+import { ButtonGroupConfig } from './button-group';
+
 export interface SummaryConfig {
   sections: {
     header: string;
@@ -23,8 +25,11 @@ export interface SummaryConfig {
     modal: boolean;
   }[];
   alert?: {
+    status: string;
     type: string;
     message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
   };
 }
 
@@ -39,8 +44,11 @@ export interface SummaryOptions {
     modal: boolean;
   }[];
   alert?: {
+    status: string;
     type: string;
     message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
   };
 }
 
@@ -71,8 +79,11 @@ export class SummaryFactory implements ComponentFactory<SummaryConfig> {
     | undefined;
   private readonly alert:
     | {
+        status: string;
         type: string;
         message: string;
+        closable: boolean;
+        buttonGroup: Component<ButtonGroupConfig>;
       }
     | undefined;
   private readonly factoryMetadata: FactoryMetadata | undefined;

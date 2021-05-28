@@ -8,6 +8,9 @@
 import { ComponentFactory, FactoryMetadata } from './component-factory';
 import { Component } from './component';
 
+import { ButtonConfig } from './button';
+import { ButtonGroupConfig } from './button-group';
+
 export interface ModalConfig {
   body?: Component<any>;
   form?: {
@@ -16,15 +19,14 @@ export interface ModalConfig {
   };
   opened: boolean;
   size?: string;
-  buttons?: {
-    name: string;
-    payload: { [key: string]: any };
-    confirmation?: {
-      title: string;
-      body: string;
-    };
-    modal?: Component<any>;
-  }[];
+  buttons?: Component<ButtonConfig>[];
+  alert?: {
+    status: string;
+    type: string;
+    message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
+  };
 }
 
 export interface ModalOptions {
@@ -34,15 +36,14 @@ export interface ModalOptions {
     action?: string;
   };
   size?: string;
-  buttons?: {
-    name: string;
-    payload: { [key: string]: any };
-    confirmation?: {
-      title: string;
-      body: string;
-    };
-    modal?: Component<any>;
-  }[];
+  buttons?: Component<ButtonConfig>[];
+  alert?: {
+    status: string;
+    type: string;
+    message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
+  };
 }
 
 interface ModalParameters {
@@ -61,16 +62,15 @@ export class ModalFactory implements ComponentFactory<ModalConfig> {
       }
     | undefined;
   private readonly size: string | undefined;
-  private readonly buttons:
+  private readonly buttons: Component<ButtonConfig>[] | undefined;
+  private readonly alert:
     | {
-        name: string;
-        payload: { [key: string]: any };
-        confirmation?: {
-          title: string;
-          body: string;
-        };
-        modal?: Component<any>;
-      }[]
+        status: string;
+        type: string;
+        message: string;
+        closable: boolean;
+        buttonGroup: Component<ButtonGroupConfig>;
+      }
     | undefined;
   private readonly factoryMetadata: FactoryMetadata | undefined;
 
@@ -83,6 +83,7 @@ export class ModalFactory implements ComponentFactory<ModalConfig> {
       this.form = options.form;
       this.size = options.size;
       this.buttons = options.buttons;
+      this.alert = options.alert;
     }
   }
 
@@ -99,6 +100,7 @@ export class ModalFactory implements ComponentFactory<ModalConfig> {
         ...(this.form && { form: this.form }),
         ...(this.size && { size: this.size }),
         ...(this.buttons && { buttons: this.buttons }),
+        ...(this.alert && { alert: this.alert }),
       },
     };
   }

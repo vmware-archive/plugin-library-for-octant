@@ -8,41 +8,19 @@
 import { ComponentFactory, FactoryMetadata } from './component-factory';
 import { Component } from './component';
 
+import { ButtonConfig } from './button';
+
 export interface ButtonGroupConfig {
-  buttons: {
-    name: string;
-    payload: { [key: string]: any };
-    confirmation?: {
-      title: string;
-      body: string;
-    };
-    modal?: Component<any>;
-  }[];
+  buttons: Component<ButtonConfig>[];
 }
 
 interface ButtonGroupParameters {
-  buttons: {
-    name: string;
-    payload: { [key: string]: any };
-    confirmation?: {
-      title: string;
-      body: string;
-    };
-    modal?: Component<any>;
-  }[];
+  buttons: Component<ButtonConfig>[];
   factoryMetadata?: FactoryMetadata;
 }
 
 export class ButtonGroupFactory implements ComponentFactory<ButtonGroupConfig> {
-  private readonly buttons: {
-    name: string;
-    payload: { [key: string]: any };
-    confirmation?: {
-      title: string;
-      body: string;
-    };
-    modal?: Component<any>;
-  }[];
+  private readonly buttons: Component<ButtonConfig>[];
   private readonly factoryMetadata: FactoryMetadata | undefined;
 
   constructor({ buttons, factoryMetadata }: ButtonGroupParameters) {

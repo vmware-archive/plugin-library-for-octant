@@ -20,7 +20,8 @@ interface LabelSelectorParameters {
 }
 
 export class LabelSelectorFactory
-  implements ComponentFactory<LabelSelectorConfig> {
+  implements ComponentFactory<LabelSelectorConfig>
+{
   private readonly key: string;
   private readonly value: string;
   private readonly factoryMetadata: FactoryMetadata | undefined;

@@ -8,6 +8,8 @@
 import { ComponentFactory, FactoryMetadata } from './component-factory';
 import { Component } from './component';
 
+import { ButtonGroupConfig } from './button-group';
+
 export interface CardConfig {
   body: Component<any>;
   actions?: {
@@ -20,8 +22,11 @@ export interface CardConfig {
     modal: boolean;
   }[];
   alert?: {
+    status: string;
     type: string;
     message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
   };
 }
 
@@ -36,8 +41,11 @@ export interface CardOptions {
     modal: boolean;
   }[];
   alert?: {
+    status: string;
     type: string;
     message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
   };
 }
 
@@ -62,8 +70,11 @@ export class CardFactory implements ComponentFactory<CardConfig> {
     | undefined;
   private readonly alert:
     | {
+        status: string;
         type: string;
         message: string;
+        closable: boolean;
+        buttonGroup: Component<ButtonGroupConfig>;
       }
     | undefined;
   private readonly factoryMetadata: FactoryMetadata | undefined;

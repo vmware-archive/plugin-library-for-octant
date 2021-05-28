@@ -13,11 +13,13 @@ export interface LinkConfig {
   ref: string;
   status?: number;
   statusDetail?: Component<any>;
+  component?: Component<any>;
 }
 
 export interface LinkOptions {
   status?: number;
   statusDetail?: Component<any>;
+  component?: Component<any>;
 }
 
 interface LinkParameters {
@@ -32,6 +34,7 @@ export class LinkFactory implements ComponentFactory<LinkConfig> {
   private readonly ref: string;
   private readonly status: number | undefined;
   private readonly statusDetail: Component<any> | undefined;
+  private readonly component: Component<any> | undefined;
   private readonly factoryMetadata: FactoryMetadata | undefined;
 
   constructor({ value, ref, options, factoryMetadata }: LinkParameters) {
@@ -42,6 +45,7 @@ export class LinkFactory implements ComponentFactory<LinkConfig> {
     if (options) {
       this.status = options.status;
       this.statusDetail = options.statusDetail;
+      this.component = options.component;
     }
   }
 
@@ -57,6 +61,7 @@ export class LinkFactory implements ComponentFactory<LinkConfig> {
 
         ...(this.status && { status: this.status }),
         ...(this.statusDetail && { statusDetail: this.statusDetail }),
+        ...(this.component && { component: this.component }),
       },
     };
   }

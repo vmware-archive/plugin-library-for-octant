@@ -56,7 +56,8 @@ interface ResourceViewerParameters {
 }
 
 export class ResourceViewerFactory
-  implements ComponentFactory<ResourceViewerConfig> {
+  implements ComponentFactory<ResourceViewerConfig>
+{
   private readonly edges:
     | {
         [key: string]: {
