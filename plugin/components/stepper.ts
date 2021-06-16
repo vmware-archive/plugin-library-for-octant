@@ -8,12 +8,14 @@
 import { ComponentFactory, FactoryMetadata } from './component-factory';
 import { Component } from './component';
 
+import { FormFieldConfig } from './form-field';
+
 export interface StepperConfig {
   action: string;
   steps: {
     name: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     title: string;
@@ -26,7 +28,7 @@ interface StepperParameters {
   steps: {
     name: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     title: string;
@@ -40,7 +42,7 @@ export class StepperFactory implements ComponentFactory<StepperConfig> {
   private readonly steps: {
     name: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     title: string;

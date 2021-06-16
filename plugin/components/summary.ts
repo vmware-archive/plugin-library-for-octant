@@ -9,6 +9,7 @@ import { ComponentFactory, FactoryMetadata } from './component-factory';
 import { Component } from './component';
 
 import { ButtonGroupConfig } from './button-group';
+import { FormFieldConfig } from './form-field';
 
 export interface SummaryConfig {
   sections: {
@@ -19,7 +20,7 @@ export interface SummaryConfig {
     name: string;
     title: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     modal: boolean;
@@ -38,7 +39,7 @@ export interface SummaryOptions {
     name: string;
     title: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     modal: boolean;
@@ -71,7 +72,7 @@ export class SummaryFactory implements ComponentFactory<SummaryConfig> {
         name: string;
         title: string;
         form: {
-          fields: any[];
+          fields: Component<FormFieldConfig>[];
           action?: string;
         };
         modal: boolean;

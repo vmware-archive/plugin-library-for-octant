@@ -10,11 +10,12 @@ import { Component } from './component';
 
 import { ButtonConfig } from './button';
 import { ButtonGroupConfig } from './button-group';
+import { FormFieldConfig } from './form-field';
 
 export interface ModalConfig {
   body?: Component<any>;
   form?: {
-    fields: any[];
+    fields: Component<FormFieldConfig>[];
     action?: string;
   };
   opened: boolean;
@@ -32,7 +33,7 @@ export interface ModalConfig {
 export interface ModalOptions {
   body?: Component<any>;
   form?: {
-    fields: any[];
+    fields: Component<FormFieldConfig>[];
     action?: string;
   };
   size?: string;
@@ -57,7 +58,7 @@ export class ModalFactory implements ComponentFactory<ModalConfig> {
   private readonly body: Component<any> | undefined;
   private readonly form:
     | {
-        fields: any[];
+        fields: Component<FormFieldConfig>[];
         action?: string;
       }
     | undefined;

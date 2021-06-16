@@ -9,6 +9,7 @@ import { ComponentFactory, FactoryMetadata } from './component-factory';
 import { Component } from './component';
 
 import { ButtonGroupConfig } from './button-group';
+import { FormFieldConfig } from './form-field';
 
 export interface CardConfig {
   body: Component<any>;
@@ -16,7 +17,7 @@ export interface CardConfig {
     name: string;
     title: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     modal: boolean;
@@ -35,7 +36,7 @@ export interface CardOptions {
     name: string;
     title: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     modal: boolean;
@@ -62,7 +63,7 @@ export class CardFactory implements ComponentFactory<CardConfig> {
         name: string;
         title: string;
         form: {
-          fields: any[];
+          fields: Component<FormFieldConfig>[];
           action?: string;
         };
         modal: boolean;
