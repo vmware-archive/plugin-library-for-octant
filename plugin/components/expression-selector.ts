@@ -22,7 +22,8 @@ interface ExpressionSelectorParameters {
 }
 
 export class ExpressionSelectorFactory
-  implements ComponentFactory<ExpressionSelectorConfig> {
+  implements ComponentFactory<ExpressionSelectorConfig>
+{
   private readonly key: string;
   private readonly operator: string;
   private readonly values: string[];

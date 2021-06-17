@@ -16,6 +16,13 @@ export interface FlexLayoutConfig {
     view?: Component<any>;
   }[][];
   buttonGroup?: Component<ButtonGroupConfig>;
+  alert?: {
+    status: string;
+    type: string;
+    message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
+  };
 }
 
 export interface FlexLayoutOptions {
@@ -24,6 +31,13 @@ export interface FlexLayoutOptions {
     view?: Component<any>;
   }[][];
   buttonGroup?: Component<ButtonGroupConfig>;
+  alert?: {
+    status: string;
+    type: string;
+    message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
+  };
 }
 
 interface FlexLayoutParameters {
@@ -39,6 +53,15 @@ export class FlexLayoutFactory implements ComponentFactory<FlexLayoutConfig> {
       }[][]
     | undefined;
   private readonly buttonGroup: Component<ButtonGroupConfig> | undefined;
+  private readonly alert:
+    | {
+        status: string;
+        type: string;
+        message: string;
+        closable: boolean;
+        buttonGroup: Component<ButtonGroupConfig>;
+      }
+    | undefined;
   private readonly factoryMetadata: FactoryMetadata | undefined;
 
   constructor({ options, factoryMetadata }: FlexLayoutParameters) {
@@ -47,6 +70,7 @@ export class FlexLayoutFactory implements ComponentFactory<FlexLayoutConfig> {
     if (options) {
       this.sections = options.sections;
       this.buttonGroup = options.buttonGroup;
+      this.alert = options.alert;
     }
   }
 
@@ -59,6 +83,7 @@ export class FlexLayoutFactory implements ComponentFactory<FlexLayoutConfig> {
       config: {
         ...(this.sections && { sections: this.sections }),
         ...(this.buttonGroup && { buttonGroup: this.buttonGroup }),
+        ...(this.alert && { alert: this.alert }),
       },
     };
   }

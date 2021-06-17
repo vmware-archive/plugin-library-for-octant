@@ -8,6 +8,9 @@
 import { ComponentFactory, FactoryMetadata } from './component-factory';
 import { Component } from './component';
 
+import { ButtonGroupConfig } from './button-group';
+import { FormFieldConfig } from './form-field';
+
 export interface SummaryConfig {
   sections: {
     header: string;
@@ -17,14 +20,17 @@ export interface SummaryConfig {
     name: string;
     title: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     modal: boolean;
   }[];
   alert?: {
+    status: string;
     type: string;
     message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
   };
 }
 
@@ -33,14 +39,17 @@ export interface SummaryOptions {
     name: string;
     title: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     modal: boolean;
   }[];
   alert?: {
+    status: string;
     type: string;
     message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
   };
 }
 
@@ -63,7 +72,7 @@ export class SummaryFactory implements ComponentFactory<SummaryConfig> {
         name: string;
         title: string;
         form: {
-          fields: any[];
+          fields: Component<FormFieldConfig>[];
           action?: string;
         };
         modal: boolean;
@@ -71,8 +80,11 @@ export class SummaryFactory implements ComponentFactory<SummaryConfig> {
     | undefined;
   private readonly alert:
     | {
+        status: string;
         type: string;
         message: string;
+        closable: boolean;
+        buttonGroup: Component<ButtonGroupConfig>;
       }
     | undefined;
   private readonly factoryMetadata: FactoryMetadata | undefined;

@@ -12,6 +12,10 @@ export interface PodStatusConfig {
   pods?: {
     [key: string]: {
       details?: Component<any>[];
+      properties?: {
+        label?: string;
+        value?: Component<any>;
+      }[];
       status?: string;
     };
   };
@@ -21,6 +25,10 @@ export interface PodStatusOptions {
   pods?: {
     [key: string]: {
       details?: Component<any>[];
+      properties?: {
+        label?: string;
+        value?: Component<any>;
+      }[];
       status?: string;
     };
   };
@@ -36,6 +44,10 @@ export class PodStatusFactory implements ComponentFactory<PodStatusConfig> {
     | {
         [key: string]: {
           details?: Component<any>[];
+          properties?: {
+            label?: string;
+            value?: Component<any>;
+          }[];
           status?: string;
         };
       }

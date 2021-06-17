@@ -24,6 +24,10 @@ export interface ResourceViewerConfig {
       kind?: string;
       status?: string;
       details?: Component<any>[];
+      properties?: {
+        label?: string;
+        value?: Component<any>;
+      }[];
       path?: Component<LinkConfig>;
     };
   };
@@ -44,6 +48,10 @@ export interface ResourceViewerOptions {
       kind?: string;
       status?: string;
       details?: Component<any>[];
+      properties?: {
+        label?: string;
+        value?: Component<any>;
+      }[];
       path?: Component<LinkConfig>;
     };
   };
@@ -56,7 +64,8 @@ interface ResourceViewerParameters {
 }
 
 export class ResourceViewerFactory
-  implements ComponentFactory<ResourceViewerConfig> {
+  implements ComponentFactory<ResourceViewerConfig>
+{
   private readonly edges:
     | {
         [key: string]: {
@@ -73,6 +82,10 @@ export class ResourceViewerFactory
           kind?: string;
           status?: string;
           details?: Component<any>[];
+          properties?: {
+            label?: string;
+            value?: Component<any>;
+          }[];
           path?: Component<LinkConfig>;
         };
       }

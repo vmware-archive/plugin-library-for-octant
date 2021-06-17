@@ -8,20 +8,26 @@
 import { ComponentFactory, FactoryMetadata } from './component-factory';
 import { Component } from './component';
 
+import { ButtonGroupConfig } from './button-group';
+import { FormFieldConfig } from './form-field';
+
 export interface CardConfig {
   body: Component<any>;
   actions?: {
     name: string;
     title: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     modal: boolean;
   }[];
   alert?: {
+    status: string;
     type: string;
     message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
   };
 }
 
@@ -30,14 +36,17 @@ export interface CardOptions {
     name: string;
     title: string;
     form: {
-      fields: any[];
+      fields: Component<FormFieldConfig>[];
       action?: string;
     };
     modal: boolean;
   }[];
   alert?: {
+    status: string;
     type: string;
     message: string;
+    closable: boolean;
+    buttonGroup: Component<ButtonGroupConfig>;
   };
 }
 
@@ -54,7 +63,7 @@ export class CardFactory implements ComponentFactory<CardConfig> {
         name: string;
         title: string;
         form: {
-          fields: any[];
+          fields: Component<FormFieldConfig>[];
           action?: string;
         };
         modal: boolean;
@@ -62,8 +71,11 @@ export class CardFactory implements ComponentFactory<CardConfig> {
     | undefined;
   private readonly alert:
     | {
+        status: string;
         type: string;
         message: string;
+        closable: boolean;
+        buttonGroup: Component<ButtonGroupConfig>;
       }
     | undefined;
   private readonly factoryMetadata: FactoryMetadata | undefined;

@@ -3,7 +3,7 @@
   "files": [
     "generators"
   ],
-  "version": "0.2.2",
+  "version": "0.21.0",
   "description": "A Yeoman generator for scaffolding an Octant Plugin in Typescript.",
   "keywords": [
     "octant",
