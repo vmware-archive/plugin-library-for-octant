@@ -325,12 +325,12 @@ export class TableFactoryBuilder {
   ) {
     this._title = title;
     this._columns = columns;
-    this._rows = options.rows ? options?.rows : [];
-    this._emptyContent = options.emptyContent
+    this._rows = options?.rows ? options?.rows : [];
+    this._emptyContent = options?.emptyContent
       ? options?.emptyContent
       : "No results found!";
-    this._loading = options.loading ? options?.loading : false;
-    this._filters = options.filters ? options?.filters : {};
+    this._loading = options?.loading ? options?.loading : false;
+    this._filters = options?.filters ? options?.filters : {};
     this.factoryMetadata = factoryMetadata;
   }
 
@@ -401,10 +401,10 @@ export class TableFactoryBuilder {
   public push(rows: TableRow | TableRow[]) {
     if (Array.isArray(rows)) {
       rows.forEach((element) => {
-        this._rows.push(element);
+        this._rows?.push(element);
       });
     } else {
-      this._rows.push(rows);
+      this._rows?.push(rows);
     }
   }
 
@@ -417,7 +417,7 @@ export class TableFactoryBuilder {
       accessor: name,
     }));
 
-    const rows = this._rows.map((row) => {
+    const rows = this._rows?.map((row) => {
       let componentRow = {} as { [key: string]: any };
       Object.keys(row.data).forEach((v) => {
         componentRow[v] = row.data[v].toComponent();
