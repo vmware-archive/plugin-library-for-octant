@@ -8,8 +8,6 @@
 import { ComponentFactory, FactoryMetadata } from './component-factory';
 import { Component } from './component';
 
-import { FormFieldConfig } from './form-field';
-
 export interface FormFieldConfig {
   type: string;
   label: string;
@@ -26,7 +24,7 @@ export interface FormFieldConfig {
   };
   placeholder?: string;
   error?: string;
-  validators?: { [key: component.FormValidator]: any };
+  validators?: { [key: string]: any };
   width?: number;
 }
 
@@ -42,7 +40,7 @@ export interface FormFieldOptions {
   };
   placeholder?: string;
   error?: string;
-  validators?: { [key: component.FormValidator]: any };
+  validators?: { [key: string]: any };
   width?: number;
 }
 
@@ -73,9 +71,7 @@ export class FormFieldFactory implements ComponentFactory<FormFieldConfig> {
     | undefined;
   private readonly placeholder: string | undefined;
   private readonly error: string | undefined;
-  private readonly validators:
-    | { [key: component.FormValidator]: any }
-    | undefined;
+  private readonly validators: { [key: string]: any } | undefined;
   private readonly width: number | undefined;
   private readonly factoryMetadata: FactoryMetadata | undefined;
 
