@@ -14,6 +14,7 @@ export interface DropdownConfig {
   action?: string;
   selection?: string;
   useSelection: boolean;
+  showToggleIcon: boolean;
   items: {
     name: string;
     type: string;
@@ -32,6 +33,7 @@ export interface DropdownOptions {
 interface DropdownParameters {
   type: string;
   useSelection: boolean;
+  showToggleIcon: boolean;
   items: {
     name: string;
     type: string;
@@ -46,6 +48,7 @@ interface DropdownParameters {
 export class DropdownFactory implements ComponentFactory<DropdownConfig> {
   private readonly type: string;
   private readonly useSelection: boolean;
+  private readonly showToggleIcon: boolean;
   private readonly items: {
     name: string;
     type: string;
@@ -61,12 +64,14 @@ export class DropdownFactory implements ComponentFactory<DropdownConfig> {
   constructor({
     type,
     useSelection,
+    showToggleIcon,
     items,
     options,
     factoryMetadata,
   }: DropdownParameters) {
     this.type = type;
     this.useSelection = useSelection;
+    this.showToggleIcon = showToggleIcon;
     this.items = items;
     this.factoryMetadata = factoryMetadata;
 
@@ -86,6 +91,7 @@ export class DropdownFactory implements ComponentFactory<DropdownConfig> {
       config: {
         type: this.type,
         useSelection: this.useSelection,
+        showToggleIcon: this.showToggleIcon,
         items: this.items,
 
         ...(this.position && { position: this.position }),
