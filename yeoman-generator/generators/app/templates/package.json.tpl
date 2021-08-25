@@ -9,10 +9,10 @@
   "scripts": {
     "plugin:check": "tsc --noEmit",
     "plugin:watch": "npx tsc-watch --noEmit --onSuccess \"npm run plugin:dev-no-check\"",
-    "plugin:dev-no-check": "webpack --output <%= pluginPath %>/<%= filename %>.js",
-    "plugin:dev": "tsc --noEmit && webpack --output <%= pluginPath %>/<%= filename %>.js",
+    "plugin:dev-no-check": "webpack --output <%= pluginPath.replace(/\\/g, '\\\\') %>/<%= filename %>.js",
+    "plugin:dev": "tsc --noEmit && webpack --output <%= pluginPath.replace(/\\/g, '\\\\') %>/<%= filename %>.js",
     "plugin:prod": "tsc --noEmit && webpack --env=production --output dist/<%= filename %>.js",
-    "plugin:install": "tsc --noEmit && webpack --env=production --output <%= pluginPath %>/<%= filename %>.js"
+    "plugin:install": "tsc --noEmit && webpack --env=production --output <%= pluginPath.replace(/\\/g, '\\\\') %>/<%= filename %>.js"
   },
   "keywords": [
     "octant",
