@@ -30,7 +30,7 @@ module.exports = class extends Generator {
                 type: 'input',
                 name: 'pluginPath',
                 message: 'Octant plugin path: ',
-                default: os.homedir() + '/.config/octant/plugins'
+                default: os.homedir().replace(/\\/g, '\\\\') + '/.config/octant/plugins'
             }
         ];
 
